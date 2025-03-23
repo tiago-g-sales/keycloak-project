@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    build:
+      context: ./cmd  
+    environment:
+      - HTTP_PORT=:8081
+      - OIDC_CLIENT_ID=app
+      - OIDC_CLIENT_SECRET=gTXhXAaTgccD5wGNvMJmMcrrvBFx37JR 
+      - OIDC_PK_STATE=aplication-state
+      - OIDC_REDIRECT_URL=http://localhost:8081/auth/callback
+      - OIDC_ISSUER=http://host.docker.internal:8080/realms/keycloak-project
+    links:
+      - keycloak      
+    ports:
+      - "8081:8081"
+    extra_hosts: 
+      - "host.docker.internal:172.17.0.1"
+    depends_on:
+      - db
+      - keycloak
+  db:
+    container_name: db_mysql
+    image: mysql:latest  
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pwd
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=pa55word
+      - MYSQL_DATABASE=keycloak
+    ports:
+      - "3306:3306"
+    volumes:
+      - .docker/db/mysql:/var/lib/mysql    
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.4 
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=mysql
+      - KC_DB_USERNAME=root
+      - KC_DB_PASSWORD=root_pwd
+      - KC_DB_URL_HOST=db
+      - KC_DB_URL_PORT=3306
+      - KC_DB_SCHEMA=keycloak
+      - KC_PROXY_HEADERS=xforwarded
+      - KC_HTTP_ENABLED=true
+    ports:
+      - 8080:8080
+    command: 
+      - start-dev 
+    depends_on:
+      - db
