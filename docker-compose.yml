@@ -7,11 +7,11 @@ services:
       context: ./cmd  
     environment:
       - HTTP_PORT=:8081
-      - OIDC_CLIENT_ID=app
-      - OIDC_CLIENT_SECRET=gTXhXAaTgccD5wGNvMJmMcrrvBFx37JR 
+      - OIDC_CLIENT_ID=myproject
+      - OIDC_CLIENT_SECRET=89c84e68-65e5-487b-8354-0fe9f4637f34 
       - OIDC_PK_STATE=aplication-state
       - OIDC_REDIRECT_URL=http://localhost:8081/auth/callback
-      - OIDC_ISSUER=http://host.docker.internal:8080/realms/keycloak-project
+      - OIDC_ISSUER=http://host.docker.internal:8080/realms/keycloakproject
     links:
       - keycloak      
     ports:
